@@ -1,0 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+funasr
+transformers
+modelscope
+huggingface_hub
+torch
+torchvision
+torchaudio

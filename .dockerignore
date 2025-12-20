@@ -1,0 +1,57 @@
+# バージョン管理ファイル
+.git/
+.gitignore
+
+# Python関連
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+env.bak/
+venv.bak/
+
+# ログファイル
+*.log
+
+# キャッシュ
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# 設定ファイル（必要に応じて）
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ビルド出力
+dist/
+build/
+*.egg-info/
+
+# テスト関連
+.coverage
+htmlcov/
+.tox/
+
+# 一時ファイル
+*.swp
+*.swo
+*~
+
+# Docker関連
+Dockerfile
+.dockerignore
+
+# その他
+.DS_Store
+Thumbs.db
+
+./inputs
+./outputs
+memo.md
