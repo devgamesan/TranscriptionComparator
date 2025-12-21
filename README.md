@@ -62,3 +62,13 @@ FunARSの実行時にモデルの取得が行われるが、Qwen0.6Bのモデル
 curl -L https://huggingface.co/Qwen/Qwen3-0.6B/resolve/main/model.safetensors \
      -o ~/.cache/modelscope/hub/models/FunAudioLLM/Fun-ASR-Nano-2512/Qwen3-0.6B/model.safetensors
 ```
+
+# 注意事項
+2015/12/21時点でpipでインストールされるFunASRはそのままでは正常に動作しないため((https://github.com/modelscope/FunASR/issues/2741))、以下のように一部を書き換えて実行するようにしている。
+このため、pipでインストールするFunASRが正常に動作するものに更新された場合、Dockerfileから以下の部分を削除する必要がある。
+
+```Dockerfile
+RUN /bin/bash -c "\
+    sed -i '12s/.*//' .venv_funasr/lib/python3.12/site-packages/funasr/models/fun_asr_nano/model.py && \
+    sed -i '44i\\            from funasr import AutoModel' .venv_funasr/lib/python3.12/site-packages/funasr/models/fun_asr_nano/model.py"
+```
