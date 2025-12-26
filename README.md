@@ -25,7 +25,7 @@ inputs/input.mp4,FunASR,FunAudioLLM/Fun-ASR-Nano-2512,7.78,おはようござい
 ## 1. Dockerイメージビルド
 docker build -t transcribers-app .
 
-## 2. コンテナ起動
+## 2. コンテナ起動&実行
 
 ```bash
 docker run --rm -it \
@@ -38,30 +38,15 @@ docker run --rm -it \
     -v "$HOME/.cache/modelscope:/home/ubuntu/.cache/modelscope" \
     -v "$HOME/.cache/whisper:/home/ubuntu/.cache/whisper" \
     --gpus all \
-    transcribers-app bash
+    transcribers-app ./run.sh  --audio-path ./inputs/input.mp4 --result-file ./outputs/result.csv
 ```
 
-inputs: 入力とする音声ファイル置き場
-outputs: 音声認識結果の出力先ディレクトリ
-src: 音声認識用のPythonスクリプトが格納されたディレクトリ
-run.sh: 実行スクリプト
+- `--audio-path`: 音声/動画ファイルのパス。対応フォーマットはMP4, MP3, WAV, M4Aなど（Whisper/FunASRがサポートする形式）。デフォルト値は`./inputs/input.mp4`。
+
+- `--result-file`: 文字起こし結果を保存するCSVファイルのパス。既存ファイルがある場合は追記される。デフォルト値は`./outputs/result.csv`。
 
 
-## 3. 文字起こしを実行する
-
-```bash
-./run.sh --audio-path ./inputs/input.mp4 --result-file ./outputs/result.csv
-```
-
-- `--audio-path`: 文字起こしする音声/動画ファイルのパスを指定します
-  - 対応フォーマット: MP4, MP3, WAV, M4Aなど（Whisper/FunASRがサポートする形式）
-  - デフォルト値: `./inputs/input.mp4`
-
-- `--result-file`: 文字起こし結果を保存するCSVファイルのパスを指定します
-  - 既存のファイルがある場合は追記されます
-  - デフォルト値: `./outputs/result.csv`
-
-## 4. Qwen0.6Bのモデルを手動で配置する
+## 3. Qwen0.6Bのモデルを手動で配置する
 FunARSの実行時にモデルの取得が行われるが、Qwen0.6Bのモデルが[Fun](FunAudioLLM/Fun-ASR-Nano-2512)にアップロードされておらず、Qwen0.6Bのモデルがないことで初回はrun.shはFunARSは必ず失敗する。このため、初回実行後に以下を実行し、手動でQwen0.6Bのモデルを配置する。
 
 ```bash
