@@ -45,6 +45,3 @@ RUN uv venv .venv_funasr && \
 RUN /bin/bash -c "\
     sed -i '12s/.*//' .venv_funasr/lib/python3.12/site-packages/funasr/models/fun_asr_nano/model.py && \
     sed -i '44i\\            from funasr import AutoModel' .venv_funasr/lib/python3.12/site-packages/funasr/models/fun_asr_nano/model.py"
-
-# --- Finally, copy the rest of the application code ---
-COPY --chown=ubuntu:ubuntu . .

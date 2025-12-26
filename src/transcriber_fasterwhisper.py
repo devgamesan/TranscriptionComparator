@@ -76,13 +76,14 @@ def transcribe(model_name: str, device: str, audio_path: str, language: str = "j
 
 
 def main():
-    """メイン関数: 複数モデルで文字起こしを実行し結果を保存"""
+    """メイン関数: 単一モデルで文字起こしを実行し結果を保存"""
     args = get_args()
-    # faster-whisperで使用するモデル一覧
-    models = ["large-v2", "large-v3", "large-v3-turbo", "kotoba-tech/kotoba-whisper-v2.0-faster"]
-    for model in models:
-        result, time = transcribe(model, device=decide_device(), audio_path=args.audio_path)
-        append_result(args.result_file, args.audio_path, "Faster Whisper", model, time, result)
+
+    # モデル名が指定されていない場合、デフォルトのモデルを使用
+    model_name = args.model_name if hasattr(args, 'model_name') and args.model_name else "large-v3"
+
+    result, time = transcribe(model_name, device=decide_device(), audio_path=args.audio_path)
+    append_result(args.result_file, args.audio_path, "Faster Whisper", model_name, time, result)
 
 
 if __name__ == "__main__":

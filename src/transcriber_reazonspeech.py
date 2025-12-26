@@ -1,28 +1,28 @@
 import os
 import time
 from typing import Dict, Any
-import importlib 
+import importlib
 
 from base import BaseTranscriber, append_result, decide_device, get_args
 
 class ReazonSpeechTranscriber(BaseTranscriber):
     """ReazonSpeech (nemo/k2/espnet) 用の汎用トランスクリプタ"""
-    
+
     def __init__(self, backend: str = "nemo", device: str = "cuda"):
         # バックエンドの検証
         if backend not in ("nemo", "k2", "espnet"):
             raise ValueError("backend must be one of 'nemo', 'k2', or 'espnet'")
-            
+
         self.backend = backend
         self.device = device
-        
+
         print(f"Loading ReazonSpeech ({backend}) on {device}...")
         start_time = time.time()
-        
+
         # 動的にモジュールをインポート（バックエンドごとに異なる実装）
         self.asr_module = importlib.import_module(f"reazonspeech.{backend}.asr")
         self.model = self.asr_module.load_model(device=device)
-        
+
         load_time = time.time() - start_time
         print(f"Model loaded in {load_time:.2f} seconds")
 
@@ -30,18 +30,18 @@ class ReazonSpeechTranscriber(BaseTranscriber):
         # ファイル存在チェック
         if not os.path.exists(audio_path):
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
-            
+
         print(f"Transcribing with ReazonSpeech ({self.backend}): {audio_path}")
-        
+
         start_time = time.time()
         # 音声ファイルの読み込みと文字起こし
         audio = self.asr_module.audio_from_path(audio_path)
         result_obj = self.asr_module.transcribe(self.model, audio)
         result = result_obj.text
-        
+
         transcribe_time = time.time() - start_time
         print(f"Transcription completed in {transcribe_time:.2f} seconds")
-        
+
         return result, transcribe_time
 
 def transcribe(
@@ -58,12 +58,12 @@ def transcribe(
 def main():
     # コマンドライン引数の取得
     args = get_args()
-    models = ["nemo", "k2", "espnet"]
-    
-    # 各バックエンドモデルで順次文字起こしを実行
-    for model in models:
-        result, time = transcribe(model, device=decide_device(), audio_path=args.audio_path)
-        append_result(args.result_file, args.audio_path, "ReazonSpeech", model, time, result)
+
+    # モデル名が指定されていない場合、デフォルトのモデルを使用
+    backend = args.model_name if hasattr(args, 'model_name') and args.model_name else "nemo"
+
+    result, time = transcribe(backend, device=decide_device(), audio_path=args.audio_path)
+    append_result(args.result_file, args.audio_path, "ReazonSpeech", backend, time, result)
 
 if __name__ == "__main__":
     main()

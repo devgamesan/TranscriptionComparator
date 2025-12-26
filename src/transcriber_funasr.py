@@ -1,4 +1,4 @@
-from funasr import AutoModel 
+from funasr import AutoModel
 import os
 import time
 from typing import Dict, Any
@@ -70,10 +70,12 @@ def transcribe(
 def main():
     """メイン関数：コマンドライン引数から音声認識を実行"""
     args = get_args()
-    models = ["FunAudioLLM/Fun-ASR-Nano-2512"]
-    for model in models:
-        result, time = transcribe(model, device=decide_device(), audio_path=args.audio_path)
-        append_result(args.result_file, args.audio_path, "FunASR", model, time, result)
- 
+
+    # モデル名が指定されていない場合、デフォルトのモデルを使用
+    model_dir = args.model_name if hasattr(args, 'model_name') and args.model_name else "FunAudioLLM/Fun-ASR-Nano-2512"
+
+    result, time = transcribe(model_dir, device=decide_device(), audio_path=args.audio_path)
+    append_result(args.result_file, args.audio_path, "FunASR", model_dir, time, result)
+
 if __name__ == "__main__":
     main()
